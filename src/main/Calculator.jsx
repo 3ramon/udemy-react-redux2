@@ -44,6 +44,10 @@ export default class Calculator extends Component {
                 values[0] = eval(
                     `${values[0]} ${currentOperation} ${values[1]}`
                 );
+                if (isNaN(values[0]) || !isFinite(values[0])) {
+                    this.clearMemory()
+                return
+                }
             } catch (e) {
                 values[0] = this.state.values[0];
             }
@@ -53,33 +57,30 @@ export default class Calculator extends Component {
                 operation: equals ? null : operation,
                 current: equals ? 0 : 1,
                 clearDisplay: !equals,
-                values:
+                values: values,
             });
         }
     }
 
     addDigit(n) {
-        if (this.state.operation === null) {
-            this.setState({ displayValue: 0 });
-        } 
-            if (n === "." && this.state.displayValue.includes(".")) {
-                return;
-            }
+        if (n === "." && this.state.displayValue.includes(".")) {
+            return;
+        }
 
-            const clearDisplay =
-                this.state.displayValue === "0" || this.state.clearDisplay;
+        const clearDisplay =
+            this.state.displayValue === "0" || this.state.clearDisplay;
 
-            const currentValue = clearDisplay ? "" : this.state.displayValue;
-            const displayValue = currentValue + n;
-            this.setState({ displayValue, clearDisplay: false });
+        const currentValue = clearDisplay ? "" : this.state.displayValue;
+        const displayValue = currentValue + n;
+        this.setState({ displayValue, clearDisplay: false });
 
-            if (n !== ".") {
-                const i = this.state.current;
-                const newValue = parseFloat(displayValue);
-                const values = [...this.state.values];
-                values[i] = newValue;
-                this.setState({ values });
-            }
+        if (n !== ".") {
+            const i = this.state.current;
+            const newValue = parseFloat(displayValue);
+            const values = [...this.state.values];
+            values[i] = newValue;
+            this.setState({ values });
+        }
     }
 
     render() {
