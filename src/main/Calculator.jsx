@@ -28,11 +28,18 @@ export default class Calculator extends Component {
     //limpar valor antigo da tela apos o novo click de outro valor
     //ao clicar em outra operacao ou igual exibir o resultado do valor
 
+    // melhorias a fazer {
+    //  acrescentar um tamanho maximo de caracteres
+    //  resolver bug ao apertar:    = = = .
+    //  if displayValue != 0 ? apagar displayValue ao digitar um novo número 
+    //}
+
     clearMemory() {
         this.setState({ ...initialState });
     }
 
     setOperation(operation) {
+        console.log(operation,'valor da operação')
         if (this.state.current === 0) {
             this.setState({ operation, current: 1, clearDisplay: true });
         } else {
@@ -45,8 +52,8 @@ export default class Calculator extends Component {
                     `${values[0]} ${currentOperation} ${values[1]}`
                 );
                 if (isNaN(values[0]) || !isFinite(values[0])) {
-                    this.clearMemory()
-                return
+                    this.clearMemory();
+                    return;
                 }
             } catch (e) {
                 values[0] = this.state.values[0];
@@ -63,18 +70,27 @@ export default class Calculator extends Component {
     }
 
     addDigit(n) {
+        //verificando se esta inserindo o ponto
         if (n === "." && this.state.displayValue.includes(".")) {
             return;
         }
 
+        //verifica se o display está vazio. caso não esteja, seta cleardisplay false
         const clearDisplay =
             this.state.displayValue === "0" || this.state.clearDisplay;
 
+        //caso o display tenha algum valor ele fica gravado nessa váriavel
         const currentValue = clearDisplay ? "" : this.state.displayValue;
+
+        //acrescenta o valor digitado a esquerda do valor que há no display
         const displayValue = currentValue + n;
+
+        //atualiza a variavel global do display com o novo valor e seta o clearDisplay para falso novamente
         this.setState({ displayValue, clearDisplay: false });
 
+        //
         if (n !== ".") {
+            //verica se está sendo digitado o primeiro valor ou segundo
             const i = this.state.current;
             const newValue = parseFloat(displayValue);
             const values = [...this.state.values];
